@@ -5,6 +5,7 @@ from state import GraphState
 from agents.metadata_agent import fetch_metadata
 from agents.mood_agent import classify_mood
 from agents.playlist_agent import generate_playlist
+from agents.finalize_playlist import finalize_playlist
 
 # New validation function
 def validate_playlist(state: GraphState) -> GraphState:
@@ -21,6 +22,7 @@ workflow.add_node("metadata", fetch_metadata)
 workflow.add_node("mood", classify_mood)
 workflow.add_node("playlist", generate_playlist)
 workflow.add_node("validate", validate_playlist)
+workflow.add_node("finalize", finalize_playlist)
 
 # Step 3: Define edges with conditional logic
 workflow.set_entry_point("metadata")
@@ -34,9 +36,18 @@ workflow.add_conditional_edges(
     "validate",
     lambda state: "playlist" if not state.get("validated", False) else END
 )
+workflow.add_edge("validate", "finalize")
+workflow.add_edge("finalize", END)
 
 # Step 4: Compile the DAG
 graph = workflow.compile()
+
+from IPython.display import Image, display
+
+try:
+    display(Image(graph.get_graph().draw_mermaid_png()))
+except Exception as e:
+    print(e)
 
 if __name__ == "__main__":
     input_state = {"song": "Happier Than Ever"}

@@ -1,4 +1,5 @@
 from typing import TypedDict, Optional, List
+from pydantic import BaseModel
 
 class GraphState(TypedDict, total=False):
     song: str
@@ -13,3 +14,17 @@ class GraphState(TypedDict, total=False):
     playlist: List[tuple[str, str]]  # [(title, YouTube link)]
     error: Optional[str]
     validated: bool  # Flag for playlist validation
+    
+class SongCreate(BaseModel):
+    title: str
+    artist: str
+    mood: str
+    youtube_url: str
+    mood_score: float
+    genre: Optional[str] = None
+
+class SongOut(SongCreate):
+    id: int
+
+    class Config:
+        orm_mode = True

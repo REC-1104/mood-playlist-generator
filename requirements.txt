@@ -9,3 +9,5 @@ torch
 youtube_search
 lyricsgenius
 langchain-groq
+uvicorn
+fastapi
